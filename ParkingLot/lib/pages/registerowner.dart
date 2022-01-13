@@ -29,14 +29,16 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
           .collection("Owners")
           .doc(_emailController.text)
           .set({
+        'Email': _emailController.text,
         'Wallet': 0.00,
-        'Adress': _adressController.text,
-        'Capacity': _capacityController.text,
+        'Address': _adressController.text,
+        'Capacity': _capacityController.text as int,
         'City': _cityController.text,
         'County': _countyController.text,
-        'HourlyFee': _hourlyFeeController.text,
+        'HourlyFee': _hourlyFeeController.text as int,
         'Occupancy': 0,
         'ParkingLotName': _nameController.text,
+        'Reservations': 0,
       });
     });
   }

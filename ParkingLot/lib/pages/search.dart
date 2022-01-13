@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:parkinglot/services/reservation.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -14,6 +16,8 @@ class _SearchPageState extends State<SearchPage> {
 
   final Stream<QuerySnapshot> _usersStream =
       FirebaseFirestore.instance.collection('Owners').snapshots();
+
+  final String? userEmail = FirebaseAuth.instance.currentUser?.email;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +122,7 @@ class _SearchPageState extends State<SearchPage> {
                               children: [
                                 ListTile(
                                   title: Text(data['ParkingLotName']),
-                                  subtitle: Text(data['Adress']),
+                                  subtitle: Text(data['Address']),
                                 ),
                                 ListTile(
                                   title: Text("\$ ${data['HourlyFee']}"),
@@ -128,6 +132,127 @@ class _SearchPageState extends State<SearchPage> {
                                   title: Text(
                                       "${data['Occupancy']}/${data['Capacity']}"),
                                   subtitle: const Text("Occupancy"),
+                                ),
+                                InkWell(
+                                  onTap: () => showDialog<String>(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                      title: const Text('Reservation'),
+                                      content: Text(data['ParkingLotName']),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, 'Cancel');
+                                          },
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            String pEmail =
+                                                data['Email'] as String;
+                                            if (await isUserAvailable(
+                                                    userEmail!) &&
+                                                await isParkingLotAvailable(
+                                                    pEmail)) {
+                                              await makeReservation(
+                                                  userEmail!, pEmail);
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  title: const Text(
+                                                      "Reservation is done"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(
+                                                            context, 'OK');
+                                                      },
+                                                      child: const Text("OK"),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            } else {
+                                              if (await isUserAvailable(
+                                                      userEmail!) ==
+                                                  false) {
+                                                return showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          AlertDialog(
+                                                    title: const Text(
+                                                        "You have already a reservation"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, 'OK');
+                                                        },
+                                                        child: const Text("OK"),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              } else if (await isParkingLotAvailable(
+                                                      pEmail) ==
+                                                  false) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          AlertDialog(
+                                                    title: const Text(
+                                                        "Selected Parking Lots is full of capacity"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context, 'OK');
+                                                        },
+                                                        child: const Text("OK"),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                            Navigator.pop(context, 'OK');
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 5),
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color:
+                                                  Colors.blue.withOpacity(.75),
+                                              width: 2),
+                                          //color: colorPrimaryShade,
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(30))),
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(5.0),
+                                        child: Center(
+                                            child: Text(
+                                          "Make a Reservation",
+                                          style: TextStyle(
+                                            color: Colors.blue,
+                                            fontSize: 20,
+                                          ),
+                                        )),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -182,7 +307,7 @@ class _SearchLotState extends State<SearchLot> {
                 children: [
                   ListTile(
                     title: Text(data['ParkingLotName']),
-                    subtitle: Text(data['Adress']),
+                    subtitle: Text(data['Address']),
                   ),
                   ListTile(
                     title: Text("\$ ${data['HourlyFee']}"),

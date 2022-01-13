@@ -26,11 +26,12 @@ class AuthService {
         email: email, password: password);
 
     await _firestore.collection("Users").doc(user.user!.email).set({
+      'Email': email,
       'UserType': "Customer",
       'Wallet': 0.00,
       'Name': name,
       'Surname': surname,
-      'ActiveReservation': null,
+      'ReservationID': "null",
     });
 
     return user.user;

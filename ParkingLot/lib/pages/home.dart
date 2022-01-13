@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:parkinglot/pages/active_reservation.dart';
 import 'package:parkinglot/pages/login.dart';
 import 'package:parkinglot/pages/search.dart';
+import 'package:parkinglot/pages/user_wallet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text("Home Page"), actions: <Widget>[
+      appBar: AppBar(title: const Text("Home Page"), actions: <Widget>[
         IconButton(
           onPressed: () {
             FirebaseAuth.instance.signOut().then((value) {
@@ -25,7 +27,7 @@ class _HomePageState extends State<HomePage> {
                   (Route<dynamic> route) => false);
             });
           },
-          icon: Icon(Icons.exit_to_app),
+          icon: const Icon(Icons.exit_to_app),
         ),
       ]),
       body: Center(
@@ -80,7 +82,13 @@ class _HomePageState extends State<HomePage> {
                       height: size.height * 0.02,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ActiveReservationPage()));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
@@ -92,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.all(5.0),
                           child: Center(
                               child: Text(
-                            "Active Reservations",
+                            "Active Reservation",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -105,7 +113,12 @@ class _HomePageState extends State<HomePage> {
                       height: size.height * 0.02,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UserWalletPage()));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
