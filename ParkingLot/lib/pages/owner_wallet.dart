@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:parkinglot/services/wallet.dart';
 
-class UserWalletPage extends StatefulWidget {
-  const UserWalletPage({Key? key}) : super(key: key);
+class OwnerWalletPage extends StatefulWidget {
+  const OwnerWalletPage({Key? key}) : super(key: key);
 
   @override
-  _UserWalletPageState createState() => _UserWalletPageState();
+  _OwnerWalletPageState createState() => _OwnerWalletPageState();
 }
 
-class _UserWalletPageState extends State<UserWalletPage> {
+class _OwnerWalletPageState extends State<OwnerWalletPage> {
   final TextEditingController _depositController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -19,10 +19,9 @@ class _UserWalletPageState extends State<UserWalletPage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var _usersStream = FirebaseFirestore.instance
-        .collection('Users')
+        .collection('Owners')
         .doc(_auth.currentUser?.email)
         .snapshots();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Wallet"),
@@ -76,7 +75,6 @@ class _UserWalletPageState extends State<UserWalletPage> {
                             ),
                           ),
                         );
-                        return Text("${asyncSnapshot.data.data()['Wallet']}");
                       },
                     ),
                     SizedBox(
@@ -115,25 +113,45 @@ class _UserWalletPageState extends State<UserWalletPage> {
                     ),
                     InkWell(
                       onTap: () async {
-                        await walletUserDeposit(
-                            int.parse(_depositController.text));
-                        int money = await walletMoneyAmount();
-                        showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: Text("Wallet: \$ $money"),
-                            content: Text(
-                                "\$ ${int.parse(_depositController.text)}  deposited"),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, 'OK');
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
+                        int money = await walletMoneyAmountOwner();
+                        if (int.parse(_depositController.text) <= money) {
+                          await walletOwnerWithdraw(
+                              int.parse(_depositController.text));
+                          money = await walletMoneyAmountOwner();
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text("Wallet: \$ $money"),
+                              content: Text(
+                                  "\$ ${int.parse(_depositController.text)} withdrawn"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'OK');
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        } else {
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text("Wallet: \$ $money"),
+                              content: Text(
+                                  "You can not withdraw \$ ${int.parse(_depositController.text)}"),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'OK');
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -146,7 +164,7 @@ class _UserWalletPageState extends State<UserWalletPage> {
                           padding: EdgeInsets.all(5.0),
                           child: Center(
                               child: Text(
-                            "Deposit Money",
+                            "Withdraw Money",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,

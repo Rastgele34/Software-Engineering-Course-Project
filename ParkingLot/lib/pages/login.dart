@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Parking Lot"),
+        title: const Text("Parking Lot"),
       ),
       body: Center(
         child: Padding(

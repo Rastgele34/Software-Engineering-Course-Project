@@ -35,3 +35,40 @@ walletUserDeposit(int deposit) async {
       .doc(userEmail)
       .update({"Wallet": money});
 }
+
+Future<int> walletMoneyAmountOwner() async {
+  final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+  int money = 0;
+
+  await FirebaseFirestore.instance
+      .collection("Owners")
+      .doc(userEmail)
+      .get()
+      .then((value) {
+    money = value.data()!['Wallet'] as int;
+  });
+
+  return money;
+}
+
+walletOwnerWithdraw(int withdraw) async {
+  final String? userEmail = FirebaseAuth.instance.currentUser?.email;
+  int money = 0;
+
+  await FirebaseFirestore.instance
+      .collection("Owners")
+      .doc(userEmail)
+      .get()
+      .then((value) {
+    money = value.data()!['Wallet'] as int;
+  });
+
+  if (withdraw <= money) {
+    money = money - withdraw;
+  }
+
+  await FirebaseFirestore.instance
+      .collection("Owners")
+      .doc(userEmail)
+      .update({"Wallet": money});
+}

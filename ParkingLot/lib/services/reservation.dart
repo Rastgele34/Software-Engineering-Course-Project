@@ -40,7 +40,6 @@ Future<bool> isParkingLotAvailable(String parkingLot) async {
 
 Future<void> makeReservation(String user, String parkingLot) async {
   int occ = 0;
-  int cap = 0;
   int res = 0;
 
   await FirebaseFirestore.instance
@@ -54,22 +53,30 @@ Future<void> makeReservation(String user, String parkingLot) async {
       .get()
       .then((value) {
     occ = value.data()!['Occupancy'] as int;
-    cap = value.data()!['Capacity'] as int;
     res = value.data()!['Reservations'] as int;
   });
 
   occ++;
-  cap++;
   res++;
 
   await FirebaseFirestore.instance
       .collection('Owners')
       .doc(parkingLot)
-      .update({'Occupancy': occ, 'Capacity': cap, 'Reservations': res});
+      .update({'Occupancy': occ, 'Reservations': res});
+
+  var parking = await FirebaseFirestore.instance
+      .collection('Owners')
+      .doc(parkingLot)
+      .get();
 
   await FirebaseFirestore.instance.collection('Reservations').doc(user).set({
     'ParkingLot': parkingLot,
     'User': user,
-    'ReservationStart': Timestamp.now()
+    'ReservationStart': Timestamp.now(),
+    'Address': parking.data()!['Address'],
+    'City': parking.data()!['City'],
+    'County': parking.data()!['County'],
+    'HourlyFee': parking.data()!['HourlyFee'],
+    'ParkingLotName': parking.data()!['ParkingLotName'],
   });
 }

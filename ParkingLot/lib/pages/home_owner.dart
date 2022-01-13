@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parkinglot/pages/login.dart';
+import 'package:parkinglot/pages/owner_wallet.dart';
+import 'package:parkinglot/pages/reservations.dart';
+import 'package:parkinglot/pages/scan_qr_code.dart';
+import 'package:parkinglot/pages/update_parking_lot.dart';
 import 'package:parkinglot/services/auth_service.dart';
 
 class HomeOwnerPage extends StatefulWidget {
@@ -52,7 +56,13 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const UpdateParkingLotPage()));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
@@ -77,7 +87,13 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
                       height: size.height * 0.02,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ReservationsPage()));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
@@ -102,7 +118,12 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
                       height: size.height * 0.02,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ScanQrCodePage()));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(
@@ -114,7 +135,7 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
                           padding: EdgeInsets.all(5.0),
                           child: Center(
                               child: Text(
-                            "QR code scan",
+                            "Scan QR code",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
@@ -127,7 +148,12 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
                       height: size.height * 0.02,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const OwnerWalletPage()));
+                      },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         decoration: BoxDecoration(

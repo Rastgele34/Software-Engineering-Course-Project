@@ -2,30 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:parkinglot/services/wallet.dart';
+import 'package:parkinglot/services/update.dart';
 
-class UserWalletPage extends StatefulWidget {
-  const UserWalletPage({Key? key}) : super(key: key);
+class UpdateParkingLotPage extends StatefulWidget {
+  const UpdateParkingLotPage({Key? key}) : super(key: key);
 
   @override
-  _UserWalletPageState createState() => _UserWalletPageState();
+  State<UpdateParkingLotPage> createState() => _UpdateParkingLotPageState();
 }
 
-class _UserWalletPageState extends State<UserWalletPage> {
-  final TextEditingController _depositController = TextEditingController();
+class _UpdateParkingLotPageState extends State<UpdateParkingLotPage> {
+  final TextEditingController _capacityController = TextEditingController();
+  final TextEditingController _occupancyController = TextEditingController();
+  final TextEditingController _hourlyFeeController = TextEditingController();
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var _usersStream = FirebaseFirestore.instance
-        .collection('Users')
+        .collection('Owners')
         .doc(_auth.currentUser?.email)
         .snapshots();
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Wallet"),
+        title: const Text("Update the Parking Lot"),
       ),
       body: Center(
         child: Padding(
@@ -67,7 +69,7 @@ class _UserWalletPageState extends State<UserWalletPage> {
                               padding: const EdgeInsets.all(5.0),
                               child: Center(
                                   child: Text(
-                                "\$ ${asyncSnapshot.data.data()['Wallet']}",
+                                "Hourly Fee: \$${asyncSnapshot.data.data()['HourlyFee']}",
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
@@ -76,14 +78,13 @@ class _UserWalletPageState extends State<UserWalletPage> {
                             ),
                           ),
                         );
-                        return Text("${asyncSnapshot.data.data()['Wallet']}");
                       },
-                    ),
+                    ), //HourlyFee
                     SizedBox(
-                      height: size.height * 0.12,
+                      height: size.height * 0.02,
                     ),
                     TextField(
-                        controller: _depositController,
+                        controller: _hourlyFeeController,
                         style: const TextStyle(
                           color: Colors.white,
                         ),
@@ -114,26 +115,8 @@ class _UserWalletPageState extends State<UserWalletPage> {
                       height: size.height * 0.02,
                     ),
                     InkWell(
-                      onTap: () async {
-                        await walletUserDeposit(
-                            int.parse(_depositController.text));
-                        int money = await walletMoneyAmount();
-                        showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            title: Text("Wallet: \$ $money"),
-                            content: Text(
-                                "\$ ${int.parse(_depositController.text)}  deposited"),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, 'OK');
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          ),
-                        );
+                      onTap: () {
+                        updateHourlyFee(int.parse(_hourlyFeeController.text));
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -146,7 +129,99 @@ class _UserWalletPageState extends State<UserWalletPage> {
                           padding: EdgeInsets.all(5.0),
                           child: Center(
                               child: Text(
-                            "Deposit Money",
+                            "Update Hourly Fee",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                            ),
+                          )),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+
+                    StreamBuilder(
+                      stream: _usersStream,
+                      builder:
+                          (BuildContext context, AsyncSnapshot asyncSnapshot) {
+                        return Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 5),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                                //color: colorPrimaryShade,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(30))),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Center(
+                                  child: Text(
+                                "Capacity: ${asyncSnapshot.data.data()['Capacity']}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              )),
+                            ),
+                          ),
+                        );
+                      },
+                    ), //Capacity
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                    TextField(
+                        controller: _capacityController,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        cursorColor: Colors.white,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.money,
+                            color: Colors.white,
+                          ),
+                          hintText: 'Amount',
+                          prefixText: ' ',
+                          hintStyle: TextStyle(color: Colors.white),
+                          focusColor: Colors.white,
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.white,
+                          )),
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                            color: Colors.white,
+                          )),
+                        )),
+                    SizedBox(
+                      height: size.height * 0.02,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        updateCapacity(int.parse(_capacityController.text));
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 2),
+                            //color: colorPrimaryShade,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(30))),
+                        child: const Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Center(
+                              child: Text(
+                            "Update Capacity",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20,
