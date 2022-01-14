@@ -20,7 +20,9 @@ updateCapacity(int cap) async {
       .doc(_auth.currentUser?.email)
       .get();
 
-  if (cap > 0 && cap > parking.data()!['Reservations']) {
+  if (cap > 0 &&
+      cap > parking.data()!['Reservations'] &&
+      cap > parking.data()!['Occupancy']) {
     FirebaseFirestore.instance
         .collection('Owners')
         .doc(_auth.currentUser?.email)

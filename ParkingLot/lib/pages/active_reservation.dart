@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:parkinglot/services/reservation.dart';
 
 class ActiveReservationPage extends StatefulWidget {
   const ActiveReservationPage({Key? key}) : super(key: key);
@@ -165,6 +166,56 @@ class _ActiveReservationPageState extends State<ActiveReservationPage> {
                               child: Center(
                                   child: Text(
                                 "Get QR Code",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              )),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: size.height * 0.02,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text(
+                                    'Are you sure you want to cancel the reservation'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, 'Cancel');
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      finalizeReservation(
+                                          _auth.currentUser?.email as String);
+                                      Navigator.pop(context, 'OK');
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
+                                //color: colorPrimaryShade,
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(30))),
+                            child: const Padding(
+                              padding: EdgeInsets.all(5.0),
+                              child: Center(
+                                  child: Text(
+                                "Cancel the reservation",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,

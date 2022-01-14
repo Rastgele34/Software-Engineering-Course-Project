@@ -56,6 +56,9 @@ Future<void> makeReservation(String user, String parkingLot) async {
     res = value.data()!['Reservations'] as int;
   });
 
+  var userInfo =
+      await FirebaseFirestore.instance.collection('Users').doc(user).get();
+
   occ++;
   res++;
 
@@ -78,5 +81,9 @@ Future<void> makeReservation(String user, String parkingLot) async {
     'County': parking.data()!['County'],
     'HourlyFee': parking.data()!['HourlyFee'],
     'ParkingLotName': parking.data()!['ParkingLotName'],
+    'UserName': userInfo.data()!['Name'],
+    'UserSurname': userInfo.data()!['Surname'],
   });
 }
+
+finalizeReservation(String user) {}
