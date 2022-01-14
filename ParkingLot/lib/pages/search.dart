@@ -197,7 +197,7 @@ class _SearchPageState extends State<SearchPage> {
                                                         pEmail)) {
                                                   await makeReservation(
                                                       userEmail!, pEmail);
-                                                  showDialog(
+                                                  return showDialog(
                                                     context: context,
                                                     builder: (BuildContext
                                                             context) =>
@@ -243,7 +243,7 @@ class _SearchPageState extends State<SearchPage> {
                                                   } else if (await isParkingLotAvailable(
                                                           pEmail) ==
                                                       false) {
-                                                    showDialog(
+                                                    return showDialog(
                                                       context: context,
                                                       builder: (BuildContext
                                                               context) =>

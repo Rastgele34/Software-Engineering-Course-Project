@@ -46,12 +46,22 @@ class _ActiveReservationPageState extends State<ActiveReservationPage> {
                   stream: _stream,
                   builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
                     if (asyncSnapshot.hasError) {
-                      return Text('Something went wrong');
+                      return const Text('Something went wrong');
                     }
 
                     if (asyncSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return Text("Loading");
+                      return const Text("Loading");
+                    }
+
+                    if (asyncSnapshot.data.data() == null) {
+                      return const Text(
+                        "There is no reservation",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      );
                     }
 
                     var timeR = asyncSnapshot.data.data()['ReservationStart'];
@@ -193,8 +203,8 @@ class _ActiveReservationPageState extends State<ActiveReservationPage> {
                                   ),
                                   TextButton(
                                     onPressed: () async {
-                                      finalizeReservation(
-                                          _auth.currentUser?.email as String);
+                                      var userEmail = _auth.currentUser?.email;
+                                      await finalizeReservation(userEmail!);
                                       Navigator.pop(context, 'OK');
                                     },
                                     child: const Text('OK'),

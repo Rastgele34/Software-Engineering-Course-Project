@@ -16,7 +16,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _countyController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _adressController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _hourlyFeeController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
 
@@ -31,7 +31,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
           .set({
         'Email': _emailController.text,
         'Wallet': 0.00,
-        'Address': _adressController.text,
+        'Address': _addressController.text,
         'Capacity': _capacityController.text as int,
         'City': _cityController.text,
         'County': _countyController.text,
@@ -200,7 +200,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                             color: Colors.white,
                           ),
                           cursorColor: Colors.white,
-                          controller: _adressController,
+                          controller: _addressController,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
                               Icons.vpn_key,

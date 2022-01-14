@@ -86,4 +86,48 @@ Future<void> makeReservation(String user, String parkingLot) async {
   });
 }
 
-finalizeReservation(String user) {}
+finalizeReservation(String user) async {
+  var res = await FirebaseFirestore.instance
+      .collection('Reservations')
+      .doc(user)
+      .get();
+
+  var timeR = res.data()!['ReservationStart'];
+  Timestamp time = timeR;
+  var date = DateTime.fromMicrosecondsSinceEpoch(time.microsecondsSinceEpoch);
+
+  var now = DateTime.now();
+
+  int durationHour = now.difference(date).inHours;
+  int durationMinute = now.difference(date).inMinutes;
+  int hourlyFee = res.data()!['HourlyFee'];
+  int fee = 0;
+
+  fee = fee + (hourlyFee * durationHour);
+
+  if (durationMinute % 60 > 0) {
+    fee = fee + hourlyFee;
+  }
+
+  String ownerEmail = await res.data()!['ParkingLot'];
+  var _user =
+      await FirebaseFirestore.instance.collection('Users').doc(user).get();
+  var _owner = await FirebaseFirestore.instance
+      .collection('Owners')
+      .doc(ownerEmail)
+      .get();
+
+  await FirebaseFirestore.instance.collection('Users').doc(user).update(
+      {'Wallet': await _user.data()!['Wallet'] - fee, 'ReservationID': 'null'});
+
+  await FirebaseFirestore.instance.collection('Owners').doc(ownerEmail).update({
+    'Wallet': await _owner.data()!['Wallet'] + fee,
+    'Reservations': await _owner.data()!['Reservations'] - 1,
+    'Occupancy': await _owner.data()!['Occupancy'] - 1,
+  });
+
+  await FirebaseFirestore.instance
+      .collection('Reservations')
+      .doc(user)
+      .delete();
+}

@@ -169,7 +169,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                                     ),
                                     TextButton(
                                       onPressed: () async {
-                                        finalizeReservation(data['User']);
+                                        await finalizeReservation(data['User']);
                                         Navigator.pop(context, 'OK');
                                       },
                                       child: const Text('OK'),
