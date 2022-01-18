@@ -56,7 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.mail,
+                              Icons.person,
                               color: Colors.white,
                             ),
                             hintText: 'Name',
@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.mail,
+                              Icons.person,
                               color: Colors.white,
                             ),
                             hintText: 'Surname',
@@ -100,9 +100,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               color: Colors.white,
                             )),
                           )),
-                      SizedBox(
-                        height: size.height * 0.02,
-                      ),
                       SizedBox(
                         height: size.height * 0.02,
                       ),

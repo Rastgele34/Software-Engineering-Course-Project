@@ -157,6 +157,7 @@ class _SearchPageState extends State<SearchPage> {
                               Map<String, dynamic> data =
                                   document.data()! as Map<String, dynamic>;
                               return Card(
+                                color: Colors.white,
                                 child: Column(
                                   children: [
                                     ListTile(

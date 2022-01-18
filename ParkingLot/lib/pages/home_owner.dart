@@ -21,19 +21,22 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text("Owner Home Page"), actions: <Widget>[
-        IconButton(
-          onPressed: () {
-            FirebaseAuth.instance.signOut().then((value) {
-              return Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                  (Route<dynamic> route) => false);
-            });
-          },
-          icon: Icon(Icons.exit_to_app),
-        ),
-      ]),
+      appBar: AppBar(
+        title: const Text("Owner Home Page"),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut().then((value) {
+                return Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                    (Route<dynamic> route) => false);
+              });
+            },
+            icon: const Icon(Icons.exit_to_app),
+          ),
+        ],
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -122,7 +125,7 @@ class _HomeOwnerPageState extends State<HomeOwnerPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const ScanQrCodePage()));
+                                builder: (context) => const ScanQRCode()));
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),

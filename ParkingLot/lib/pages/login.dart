@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:parkinglot/pages/applications.dart';
 import 'package:parkinglot/pages/home.dart';
 import 'package:parkinglot/pages/home_owner.dart';
 import 'package:parkinglot/pages/register.dart';
@@ -103,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                           )),
                         )),
                     SizedBox(
-                      height: size.height * 0.08,
+                      height: size.height * 0.04,
                     ),
                     InkWell(
                       onTap: () {
@@ -111,17 +112,33 @@ class _LoginPageState extends State<LoginPage> {
                             .signIn(
                                 _emailController.text, _passwordController.text)
                             .then((value) async {
-                          final snapShot = await FirebaseFirestore.instance
+                          final _admin = await FirebaseFirestore.instance
+                              .collection('Admins')
+                              .doc(_emailController.text)
+                              .get();
+                          if (_admin.exists) {
+                            return Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const ApplicationsPage()),
+                                (Route<dynamic> route) => false);
+                          }
+                          final _user = await FirebaseFirestore.instance
                               .collection('Users')
                               .doc(_emailController.text)
                               .get();
-                          if (snapShot.exists) {
+                          if (_user.exists) {
                             return Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                     builder: (_) => const HomePage()),
                                 (Route<dynamic> route) => false);
-                          } else {
+                          }
+                          final _owner = await FirebaseFirestore.instance
+                              .collection('Owners')
+                              .doc(_emailController.text)
+                              .get();
+                          if (_owner.exists) {
                             return Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
@@ -151,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     SizedBox(
-                      height: size.height * 0.02,
+                      height: size.height * 0.04,
                     ),
                     InkWell(
                       onTap: () {
@@ -181,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     SizedBox(
-                      height: size.height * 0.02,
+                      height: size.height * 0.04,
                     ),
                     InkWell(
                       onTap: () {

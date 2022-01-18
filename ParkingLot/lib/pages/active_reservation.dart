@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:parkinglot/pages/generate_qr_code.dart';
 import 'package:parkinglot/services/reservation.dart';
 
 class ActiveReservationPage extends StatefulWidget {
@@ -162,7 +163,13 @@ class _ActiveReservationPageState extends State<ActiveReservationPage> {
                           height: size.height * 0.02,
                         ),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const GeneraterQRCode()));
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             decoration: BoxDecoration(

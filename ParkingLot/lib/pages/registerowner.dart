@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:parkinglot/pages/login.dart';
 
 class RegisterOwnerPage extends StatefulWidget {
@@ -20,27 +20,72 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
   final TextEditingController _hourlyFeeController = TextEditingController();
   final TextEditingController _capacityController = TextEditingController();
 
-  Future<void> createOwner() async {
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: _emailController.text, password: _passwordController.text)
-        .then((owners) {
-      FirebaseFirestore.instance
-          .collection("Owners")
+  createOwner() async {
+    final _user = await FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(_emailController.text)
+        .get();
+    final _owner = await FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(_emailController.text)
+        .get();
+    final _app = await FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(_emailController.text)
+        .get();
+    final _adm = await FirebaseFirestore.instance
+        .collection('Admins')
+        .doc(_emailController.text)
+        .get();
+    if (_user.exists | _owner.exists | _adm.exists) {
+      return showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('This e-mail address is in use'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } else if (_app.exists) {
+      return showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title:
+              const Text('There is an application with this e-mail address.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      await FirebaseFirestore.instance
+          .collection('Applications')
           .doc(_emailController.text)
           .set({
         'Email': _emailController.text,
-        'Wallet': 0.00,
+        'Wallet': 0,
         'Address': _addressController.text,
-        'Capacity': _capacityController.text as int,
+        'Capacity': int.parse(_capacityController.text),
         'City': _cityController.text,
         'County': _countyController.text,
-        'HourlyFee': _hourlyFeeController.text as int,
+        'HourlyFee': int.parse(_hourlyFeeController.text),
         'Occupancy': 0,
         'ParkingLotName': _nameController.text,
         'Reservations': 0,
+        'Password': _passwordController.text,
       });
-    });
+    }
   }
 
   @override
@@ -131,7 +176,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                           controller: _nameController,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.vpn_key,
+                              Icons.local_parking,
                               color: Colors.white,
                             ),
                             hintText: 'Parking Lot Name',
@@ -155,7 +200,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                           controller: _countyController,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.vpn_key,
+                              Icons.location_city,
                               color: Colors.white,
                             ),
                             hintText: 'County',
@@ -179,7 +224,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                           controller: _cityController,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.vpn_key,
+                              Icons.location_city,
                               color: Colors.white,
                             ),
                             hintText: 'City',
@@ -203,7 +248,7 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                           controller: _addressController,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.vpn_key,
+                              Icons.location_city,
                               color: Colors.white,
                             ),
                             hintText: 'Full Address',
@@ -225,9 +270,13 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                           ),
                           cursorColor: Colors.white,
                           controller: _hourlyFeeController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.vpn_key,
+                              Icons.attach_money,
                               color: Colors.white,
                             ),
                             hintText: 'Hourly Fee',
@@ -249,9 +298,13 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                           ),
                           cursorColor: Colors.white,
                           controller: _capacityController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           decoration: const InputDecoration(
                             prefixIcon: Icon(
-                              Icons.vpn_key,
+                              Icons.add_rounded,
                               color: Colors.white,
                             ),
                             hintText: 'Capacity',
@@ -271,13 +324,98 @@ class _RegisterOwnerPageState extends State<RegisterOwnerPage> {
                         height: size.height * 0.02,
                       ),
                       InkWell(
-                        onTap: () {
-                          createOwner().then((value) {
-                            return Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginPage()));
-                          });
+                        onTap: () async {
+                          final _user = await FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(_emailController.text)
+                              .get();
+                          final _owner = await FirebaseFirestore.instance
+                              .collection('Owners')
+                              .doc(_emailController.text)
+                              .get();
+                          final _app = await FirebaseFirestore.instance
+                              .collection('Applications')
+                              .doc(_emailController.text)
+                              .get();
+                          final _adm = await FirebaseFirestore.instance
+                              .collection('Admins')
+                              .doc(_emailController.text)
+                              .get();
+                          if (_user.exists | _owner.exists | _adm.exists) {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title:
+                                    const Text('This e-mail address is in use'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, 'OK');
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else if (_app.exists) {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text(
+                                    'There is an application with this e-mail address.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, 'OK');
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginPage()));
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            await FirebaseFirestore.instance
+                                .collection('Applications')
+                                .doc(_emailController.text)
+                                .set({
+                              'Email': _emailController.text,
+                              'Wallet': 0,
+                              'Address': _addressController.text,
+                              'Capacity': int.parse(_capacityController.text),
+                              'City': _cityController.text,
+                              'County': _countyController.text,
+                              'HourlyFee': int.parse(_hourlyFeeController.text),
+                              'Occupancy': 0,
+                              'ParkingLotName': _nameController.text,
+                              'Reservations': 0,
+                              'Password': _passwordController.text,
+                            });
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: const Text(
+                                    'Your application has been received.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, 'OK');
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const LoginPage()));
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 5),
