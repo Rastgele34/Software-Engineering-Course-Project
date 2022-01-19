@@ -28,7 +28,37 @@ class _ScanQRCodeState extends State<ScanQRCode> {
     setState(() {
       qrResult = barcodeScanRes.toString();
     });
-    await scanFinalizeReservation(qrResult);
+    if (await scanFinalizeReservation(qrResult)) {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('$qrResult is scanned'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text('$qrResult has not a reservation'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override

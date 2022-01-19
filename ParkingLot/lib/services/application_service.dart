@@ -13,9 +13,9 @@ acceptApplication(String eMail) async {
 
   var password = appeal.data()!['Password'] as String;
   await FirebaseAuth.instance
-      .signInWithEmailAndPassword(email: eMail, password: password);
+      .createUserWithEmailAndPassword(email: eMail, password: password);
 
-  FirebaseFirestore.instance.collection('Owners').doc(eMail).set({
+  await FirebaseFirestore.instance.collection('Owners').doc(eMail).set({
     'Address': appeal.data()!['Address'],
     'Capacity': appeal.data()!['Capacity'],
     'City': appeal.data()!['City'],
@@ -28,5 +28,8 @@ acceptApplication(String eMail) async {
     'Wallet': appeal.data()!['Wallet'],
   });
 
-  FirebaseFirestore.instance.collection('Applications').doc(eMail).delete();
+  await FirebaseFirestore.instance
+      .collection('Applications')
+      .doc(eMail)
+      .delete();
 }

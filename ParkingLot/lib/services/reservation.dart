@@ -133,15 +133,23 @@ finalizeReservation(String user) async {
       .delete();
 }
 
-scanFinalizeReservation(String user) async {
-  var currentUserEmail = FirebaseAuth.instance.currentUser?.email;
+Future<bool> scanFinalizeReservation(String user) async {
+  var currentUserEmail = FirebaseAuth.instance.currentUser?.email as String;
   var _res = await FirebaseFirestore.instance
       .collection('Reservations')
-      .doc('user')
+      .doc(user)
       .get();
-  var ownerEmail = _res.data()!['ParkingLot'];
+
+  if (_res.data() == null) {
+    return false;
+  }
+
+  var ownerEmail = _res.data()!['ParkingLot'] as String;
 
   if (currentUserEmail == ownerEmail) {
     await finalizeReservation(user);
+    return true;
+  } else {
+    return false;
   }
 }

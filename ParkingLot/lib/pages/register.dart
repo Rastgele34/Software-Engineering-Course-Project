@@ -185,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             padding: EdgeInsets.all(5.0),
                             child: Center(
                                 child: Text(
-                              "Log in",
+                              "Sign in",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20,
