@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:parkinglot/pages/applications.dart';
 import 'package:parkinglot/pages/home.dart';
@@ -107,45 +108,62 @@ class _LoginPageState extends State<LoginPage> {
                       height: size.height * 0.04,
                     ),
                     InkWell(
-                      onTap: () {
-                        _authService
-                            .signIn(
-                                _emailController.text, _passwordController.text)
-                            .then((value) async {
-                          final _admin = await FirebaseFirestore.instance
-                              .collection('Admins')
-                              .doc(_emailController.text)
-                              .get();
-                          if (_admin.exists) {
-                            return Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const ApplicationsPage()),
-                                (Route<dynamic> route) => false);
-                          }
-                          final _user = await FirebaseFirestore.instance
-                              .collection('Users')
-                              .doc(_emailController.text)
-                              .get();
-                          if (_user.exists) {
-                            return Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const HomePage()),
-                                (Route<dynamic> route) => false);
-                          }
-                          final _owner = await FirebaseFirestore.instance
-                              .collection('Owners')
-                              .doc(_emailController.text)
-                              .get();
-                          if (_owner.exists) {
-                            return Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const HomeOwnerPage()),
-                                (Route<dynamic> route) => false);
-                          }
-                        });
+                      onTap: () async {
+                        try {
+                          await _authService
+                              .signIn(_emailController.text,
+                                  _passwordController.text)
+                              .then((value) async {
+                            final _admin = await FirebaseFirestore.instance
+                                .collection('Admins')
+                                .doc(_emailController.text)
+                                .get();
+                            if (_admin.exists) {
+                              return Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const ApplicationsPage()),
+                                  (Route<dynamic> route) => false);
+                            }
+                            final _user = await FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(_emailController.text)
+                                .get();
+                            if (_user.exists) {
+                              return Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const HomePage()),
+                                  (Route<dynamic> route) => false);
+                            }
+                            final _owner = await FirebaseFirestore.instance
+                                .collection('Owners')
+                                .doc(_emailController.text)
+                                .get();
+                            if (_owner.exists) {
+                              return Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) => const HomeOwnerPage()),
+                                  (Route<dynamic> route) => false);
+                            }
+                          });
+                        } on FirebaseAuthException catch (e) {
+                          showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text('${e.message}'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'OK');
+                                  },
+                                  child: const Text('OK'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 5),
