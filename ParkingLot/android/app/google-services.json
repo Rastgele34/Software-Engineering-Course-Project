@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:24827359405:android:b2deebeaaa17fdf01d1624",
+        "mobilesdk_app_id": "1:24827359405:android:7b8e4bc06082df971d1624",
         "android_client_info": {
-          "package_name": "com.example.parkinglot"
+          "package_name": "com.anild.parkinglot"
         }
       },
       "oauth_client": [

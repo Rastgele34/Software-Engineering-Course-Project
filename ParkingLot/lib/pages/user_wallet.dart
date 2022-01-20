@@ -48,36 +48,37 @@ class _UserWalletPageState extends State<UserWalletPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    StreamBuilder(
-                      stream: _usersStream,
-                      builder:
-                          (BuildContext context, AsyncSnapshot asyncSnapshot) {
-                        return Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 5),
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
-                                //color: colorPrimaryShade,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(30))),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Center(
-                                  child: Text(
-                                "\$ ${asyncSnapshot.data.data()['Wallet']}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              )),
+                    Expanded(
+                      child: StreamBuilder(
+                        stream: _usersStream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot asyncSnapshot) {
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 5),
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.white, width: 2),
+                                  //color: colorPrimaryShade,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(30))),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Center(
+                                    child: Text(
+                                  "\$ ${asyncSnapshot.data.data()['Wallet']}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                  ),
+                                )),
+                              ),
                             ),
-                          ),
-                        );
-                        return Text("${asyncSnapshot.data.data()['Wallet']}");
-                      },
+                          );
+                        },
+                      ),
                     ),
                     SizedBox(
                       height: size.height * 0.12,
